@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#a5bfd6" />
+    <meta name="description" content="Le Secret Santa de la famille." />
+    <title>Secret Santa familial</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main id="app" class="app" aria-live="polite">
+      <section id="home" class="screen home-screen">
+        <div class="home-content">
+          <h1 class="arc-title" aria-label="Secret Santa">
+            <span>S</span><span>E</span><span>C</span><span>R</span><span>E</span><span>T</span><span>&nbsp;</span><span>S</span><span>A</span><span>N</span><span>T</span><span>A</span>
+          </h1>
+          <img class="santa home-santa" src="./santa.svg" alt="Petit Père Noël" />
+          <p class="organizer-name">ROBYN X LEPOUTRE</p>
+          <button id="start-button" class="pill-button home-button" type="button">click here</button>
+        </div>
+      </section>
+
+      <section id="participants" class="screen participants-screen" hidden>
+        <img class="santa side-santa side-santa-left" src="./santa.svg" alt="" />
+        <img class="santa side-santa side-santa-right" src="./santa.svg" alt="" />
+        <div class="participants-content">
+          <h2 class="instructions">Appuie sur le bouton en face de ton prénom pour découvrir<br class="desktop-break" /> la personne à qui tu dois faire un cadeau</h2>
+          <p id="status" class="status" role="status"></p>
+          <ul id="participant-list" class="participant-list" aria-label="Liste des participants"></ul>
+          <button id="back-home" class="text-button" type="button">Retour</button>
+        </div>
+      </section>
+
+      <section id="reveal" class="screen reveal-screen" hidden>
+        <div class="reveal-content">
+          <img class="santa reveal-santa" src="./santa.svg" alt="Petit Père Noël" />
+          <p class="reveal-prompt">Tu dois offrir un cadeau à...</p>
+          <h2 id="recipient-name" class="recipient-name"></h2>
+          <button id="back-list" class="pill-button return-button" type="button">Retour à la liste</button>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 260" role="img" aria-label="Petit Père Noël">
+  <g stroke="#422d24" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="80" cy="24" r="17" fill="#ffe7c0" stroke-width="6"/>
+    <path d="M77 40C61 68 42 100 32 139h96C119 98 99 66 83 40Z" fill="#ad0000" stroke="none"/>
+    <path d="M34 139c-12 8-17 16-13 25-8 9-5 21 5 24-1 12 9 19 20 17 7 11 22 13 34 8 12 6 27 3 34-8 12 1 21-7 19-18 10-5 11-17 2-23 2-12-5-20-17-25" fill="#ffe7c0" stroke-width="7"/>
+    <path d="M43 139c-4-20-1-37 8-49 10 5 18 7 29 7 12 0 21-3 30-8 9 14 12 31 7 50-17 8-56 8-74 0Z" fill="#ffbf9b" stroke="none"/>
+    <circle cx="63" cy="151" r="4" fill="#422d24" stroke="none"/><circle cx="97" cy="151" r="4" fill="#422d24" stroke="none"/>
+    <ellipse cx="80" cy="160" rx="12" ry="9" fill="#f18d4d" stroke="none"/>
+    <path d="M44 195c-12 4-20 17-22 35l18 11 17-8 46 1 17 8 18-12c-3-18-11-31-23-35" fill="#ad0000" stroke-width="6"/>
+    <path d="M28 224c-2 12 3 19 14 19l10-8-4-17Z M132 224c2 12-3 19-14 19l-10-8 4-17Z" fill="#ffbf9b" stroke="none"/>
+    <ellipse cx="53" cy="238" rx="15" ry="23" transform="rotate(-20 53 238)" fill="#241914" stroke="none"/>
+    <ellipse cx="107" cy="238" rx="15" ry="23" transform="rotate(20 107 238)" fill="#241914" stroke="none"/>
+  </g>
+</svg>
