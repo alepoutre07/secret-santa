@@ -1,0 +1,79 @@
+/* Finitions de la première page et des petits Pères Noël, en complément des styles de base. */
+.home-content {
+  width: min(100%, 820px);
+}
+
+.arc-title {
+  width: min(100%, 790px);
+  min-height: 1.5em;
+  margin-bottom: 0;
+  font-size: clamp(2.6rem, 8.1vw, 5.2rem);
+  letter-spacing: 0.015em;
+  line-height: 1;
+}
+
+/* Les lettres suivent une courbe régulière, avec une inclinaison qui s'inverse
+   de part et d'autre du sommet de l'arc. */
+.arc-title span:nth-child(1) { transform: translateY(28px) rotate(-30deg); }
+.arc-title span:nth-child(2) { transform: translateY(12px) rotate(-22deg); }
+.arc-title span:nth-child(3) { transform: translateY(0) rotate(-14deg); }
+.arc-title span:nth-child(4) { transform: translateY(-10px) rotate(-8deg); }
+.arc-title span:nth-child(5) { transform: translateY(-16px) rotate(-3deg); }
+.arc-title span:nth-child(6),
+.arc-title span:nth-child(7) { transform: translateY(-20px); }
+.arc-title span:nth-child(8) { transform: translateY(-16px) rotate(3deg); }
+.arc-title span:nth-child(9) { transform: translateY(-10px) rotate(8deg); }
+.arc-title span:nth-child(10) { transform: translateY(0) rotate(14deg); }
+.arc-title span:nth-child(11) { transform: translateY(12px) rotate(22deg); }
+.arc-title span:nth-child(12) { transform: translateY(28px) rotate(30deg); }
+
+.santa {
+  filter: drop-shadow(0 5px 3px rgba(66, 45, 36, 0.16));
+}
+
+.home-santa {
+  width: 154px;
+  height: 254px;
+  margin-top: 3px;
+  margin-bottom: 12px;
+}
+
+.side-santa {
+  width: 112px;
+  height: 224px;
+}
+
+.reveal-santa {
+  width: 154px;
+  height: 245px;
+}
+
+@media (max-width: 760px) {
+  .home-content { width: 100%; }
+  .arc-title {
+    width: 100%;
+    min-height: 1.35em;
+    margin-bottom: 3px;
+    font-size: clamp(2rem, 9.2vw, 3.7rem);
+  }
+  .arc-title span:nth-child(1) { transform: translateY(14px) rotate(-25deg); }
+  .arc-title span:nth-child(2) { transform: translateY(6px) rotate(-18deg); }
+  .arc-title span:nth-child(3) { transform: translateY(0) rotate(-11deg); }
+  .arc-title span:nth-child(4) { transform: translateY(-5px) rotate(-5deg); }
+  .arc-title span:nth-child(5) { transform: translateY(-8px) rotate(-2deg); }
+  .arc-title span:nth-child(6),
+  .arc-title span:nth-child(7) { transform: translateY(-10px); }
+  .arc-title span:nth-child(8) { transform: translateY(-8px) rotate(2deg); }
+  .arc-title span:nth-child(9) { transform: translateY(-5px) rotate(5deg); }
+  .arc-title span:nth-child(10) { transform: translateY(0) rotate(11deg); }
+  .arc-title span:nth-child(11) { transform: translateY(6px) rotate(18deg); }
+  .arc-title span:nth-child(12) { transform: translateY(14px) rotate(25deg); }
+  .home-santa {
+    width: 132px;
+    height: 220px;
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  .side-santa { width: 56px; height: 118px; }
+  .reveal-santa { width: 140px; height: 230px; }
+}
