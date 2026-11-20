@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main id="app" class="app" aria-live="polite">
+    <main id="app" class="app">
       <section id="home" class="screen home-screen">
         <div class="home-content">
           <h1 class="arc-title" aria-label="Secret Santa">
@@ -26,9 +26,21 @@
         <img class="santa side-santa side-santa-right" src="./santa.svg" alt="" />
         <div class="participants-content">
           <h2 class="instructions">Appuie sur le bouton en face de ton prénom pour découvrir<br class="desktop-break" /> la personne à qui tu dois faire un cadeau</h2>
-          <p id="status" class="status" role="status"></p>
+          <p id="status" class="status" role="status" aria-live="polite"></p>
           <ul id="participant-list" class="participant-list" aria-label="Liste des participants"></ul>
           <button id="back-home" class="text-button" type="button">Retour</button>
+          <button id="manage-toggle" class="text-button manage-toggle" type="button" aria-expanded="false" aria-controls="manage-panel">Gérer les participants</button>
+          <section id="manage-panel" class="manage-panel" hidden aria-label="Gestion des participants">
+            <p class="manage-warning">Gestion réservée à l’organisatrice. La liste est modifiable avant le premier tirage seulement.</p>
+            <label class="admin-label" for="admin-token">Jeton administrateur</label>
+            <input id="admin-token" class="admin-input" type="password" autocomplete="off" />
+            <label class="admin-label" for="names-input">Prénoms (un par ligne)</label>
+            <textarea id="names-input" class="admin-input names-input" rows="8" maxlength="6200" spellcheck="false"></textarea>
+            <div class="manage-actions">
+              <button id="save-names" class="pill-button manage-save" type="button">Enregistrer la liste</button>
+              <button id="cancel-manage" class="text-button" type="button">Annuler</button>
+            </div>
+          </section>
         </div>
       </section>
 
@@ -36,7 +48,7 @@
         <div class="reveal-content">
           <img class="santa reveal-santa" src="./santa.svg" alt="Petit Père Noël" />
           <p class="reveal-prompt">Tu dois offrir un cadeau à...</p>
-          <h2 id="recipient-name" class="recipient-name"></h2>
+          <h2 id="recipient-name" class="recipient-name" aria-live="polite"></h2>
           <button id="back-list" class="pill-button return-button" type="button">Retour à la liste</button>
         </div>
       </section>

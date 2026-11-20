@@ -9,13 +9,14 @@
 }
 html, body { min-height: 100%; margin: 0; }
 body { background: var(--blue); color: var(--brown); font-family: var(--font); }
-button { font: inherit; }
+button, input, textarea { font: inherit; }
 [hidden] { display: none !important; }
 .app { min-height: 100vh; }
-.screen { min-height: 100vh; position: relative; }
+.screen { min-height: 100vh; position: relative; animation: screen-in .32s ease both; }
+@keyframes screen-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 .home-screen { display: grid; place-items: center; padding: 48px 20px; }
 .home-content { display: flex; flex-direction: column; align-items: center; width: min(100%, 720px); }
-.arc-title { display: flex; align-items: center; justify-content: center; white-space: pre; margin: 0 0 6px; color: var(--brown); font-size: clamp(2.4rem, 7.1vw, 5.2rem); font-weight: 800; line-height: 1.15; }
+.arc-title { display: flex; align-items: center; justify-content: center; white-space: pre; margin: 0 0 6px; color: var(--brown); font-size: clamp(2.4rem, 7.1vw, 5.2rem); font-weight: 800; line-height: 1.2; }
 .arc-title span { display: inline-block; }
 .arc-title span:nth-child(1), .arc-title span:nth-child(12) { transform: translateY(28px) rotate(-30deg); }
 .arc-title span:nth-child(2), .arc-title span:nth-child(11) { transform: translateY(12px) rotate(-22deg); }
@@ -29,7 +30,7 @@ button { font: inherit; }
 .pill-button { border: 0; border-radius: 22px; background: var(--red); color: var(--cream); font-weight: 700; cursor: pointer; transition: filter .15s ease, transform .15s ease; }
 .pill-button:hover { filter: brightness(1.08); }
 .pill-button:active { transform: translateY(1px); }
-.pill-button:focus-visible, .text-button:focus-visible { outline: 3px solid var(--brown); outline-offset: 4px; }
+.pill-button:focus-visible, .text-button:focus-visible, .admin-input:focus-visible { outline: 3px solid var(--brown); outline-offset: 4px; }
 .pill-button:disabled { opacity: .65; cursor: wait; }
 .home-button { width: 296px; min-height: 57px; font-size: 1.9rem; }
 .participants-screen { padding: 74px 180px 44px; }
@@ -38,7 +39,7 @@ button { font: inherit; }
 .status { min-height: 1.4em; margin: -30px 0 12px; text-align: center; font-weight: 700; }
 .participant-list { padding: 0; margin: 0; list-style: none; }
 .participant-row { display: grid; grid-template-columns: 200px minmax(40px, 1fr) 200px; align-items: center; gap: 14px; min-height: 74px; }
-.participant-name, .reveal-button { display: flex; align-items: center; justify-content: center; min-height: 56px; padding: 8px 14px; border-radius: 22px; background: var(--red); color: var(--cream); font-size: clamp(1.15rem, 2.2vw, 1.9rem); font-weight: 700; text-align: center; }
+.participant-name, .reveal-button { display: flex; align-items: center; justify-content: center; min-height: 56px; padding: 8px 14px; border-radius: 22px; background: var(--red); color: var(--cream); font-size: 1.5rem; font-weight: 700; text-align: center; }
 .row-arrow { height: 2px; background: var(--brown); position: relative; }
 .row-arrow::after { content: ""; position: absolute; right: 0; top: -6px; width: 11px; height: 11px; border-top: 2px solid var(--brown); border-right: 2px solid var(--brown); transform: rotate(45deg); }
 .reveal-button { width: 100%; }
@@ -46,12 +47,26 @@ button { font: inherit; }
 .side-santa-left { left: max(4%, calc((100% - 1260px) / 2)); }
 .side-santa-right { right: max(4%, calc((100% - 1260px) / 2)); }
 .text-button { display: block; margin: 26px auto 0; border: 0; background: transparent; color: var(--brown); font-size: 1rem; text-decoration: underline; cursor: pointer; }
+.manage-toggle { margin-top: 12px; font-size: .9rem; }
+.manage-panel { max-width: 520px; margin: 22px auto 0; padding: 20px; border: 2px solid var(--brown); border-radius: 18px; background: rgba(255, 231, 192, .45); }
+.manage-warning { margin: 0 0 16px; line-height: 1.45; }
+.admin-label { display: block; margin: 12px 0 6px; font-weight: 700; }
+.admin-input { display: block; width: 100%; border: 2px solid var(--brown); border-radius: 10px; padding: 10px 12px; color: var(--brown); background: #fff8eb; }
+.names-input { resize: vertical; min-height: 130px; }
+.manage-actions { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.manage-save { min-height: 46px; padding: 8px 18px; }
+.manage-actions .text-button { margin: 0; }
 .reveal-screen { display: grid; place-items: center; padding: 40px 20px; }
 .reveal-content { display: flex; flex-direction: column; align-items: center; text-align: center; }
 .reveal-santa { width: 150px; height: 245px; }
 .reveal-prompt { margin: 20px 0 12px; font-size: clamp(1.5rem, 4vw, 2.5rem); font-weight: 700; }
-.recipient-name { margin: 0 0 36px; font-size: clamp(2.2rem, 6vw, 4rem); font-weight: 800; }
+.recipient-name { margin: 0 0 36px; font-size: clamp(2.2rem, 6vw, 4rem); font-weight: 800; animation: reveal-name .65s ease both; }
+@keyframes reveal-name { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .return-button { min-width: 250px; min-height: 56px; padding: 8px 24px; font-size: 1.35rem; }
+@media (max-width: 900px) {
+  .participants-screen { padding-left: 100px; padding-right: 100px; }
+  .participant-row { grid-template-columns: minmax(120px, 1fr) 32px minmax(120px, 1fr); }
+}
 @media (max-width: 760px) {
   .home-screen { min-height: 100svh; }
   .arc-title { font-size: clamp(2rem, 9vw, 3.7rem); margin-bottom: 14px; }
@@ -76,5 +91,9 @@ button { font: inherit; }
   .side-santa-right { right: 3px; }
   .participant-list, .instructions, .status, .text-button { position: relative; z-index: 1; }
   .text-button { margin-top: 20px; }
+  .manage-toggle { margin-top: 10px; }
+  .manage-panel { padding: 16px; }
 }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

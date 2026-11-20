@@ -1,33 +1,48 @@
 # Secret Santa familial
 
-Application légère en français, fidèle aux captures fournies : fond bleu pastel, texte brun, boutons rouges arrondis, titre en arc, Père Noël illustré et liste en deux colonnes. L'interface est statique et peut être hébergée sur tout hébergeur de fichiers statiques ; Supabase fournit la base et les fonctions côté serveur.
+Application web monopage en français, conçue autour des maquettes Figma fournies dans le dépôt. Elle conserve le fond bleu pastel, les tons brun/rouge/beige, le titre en arc, l'illustration du Père Noël et la liste à deux colonnes. Les écrans s'enchaînent sans rechargement.
 
-## Participants de départ
+## Architecture
 
-La liste des captures est : Thomas, Mamé, Nathalie, Martin, Zoé, Seb, Papé, Jean, Agathe et Marion. Le tirage n'a pas lieu tant que quelqu'un n'appuie pas sur « Révéler ».
+- Interface statique (`index.html`, `styles.css`, `app.js`, `santa.svg`) hébergeable sur Netlify, Vercel ou un autre hébergeur statique.
+- Supabase fournit PostgreSQL et trois Edge Functions : `participants` (noms seulement), `reveal` (un destinataire par requête) et `setup` (gestion protégée des prénoms).
+- La clé publique anon est prévue pour le navigateur. La clé `service_role` et le jeton administrateur ne doivent jamais être ajoutés au dépôt ou au frontend.
+- Le tirage est produit côté serveur une seule fois au premier clic. Les associations restent dans une table protégée, et une contrainte garantit qu'aucun destinataire n'est attribué deux fois ni à soi-même.
 
-## Configuration et lancement
+## Configuration et publication
 
-1. Crée un projet Supabase et exécute `supabase/migrations/0001_secret_santa.sql` dans le SQL Editor.
-2. Déploie les fonctions `participants`, `reveal` et `setup` avec la CLI Supabase (`supabase functions deploy participants`, etc.). Configure les secrets `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` et un long `ADMIN_TOKEN` secret côté serveur. Ne publie jamais la clé service-role ni le jeton administrateur.
-3. Modifie `config.js` avec l'URL du projet et la clé anon publique. La clé anon est conçue pour être exposée ; la sécurité repose sur RLS et les fonctions.
-4. Configure la liste initiale via `setup` (requête POST vers `/functions/v1/setup`, entête `x-admin-token: <ADMIN_TOKEN>`, corps `{"names":["Thomas","Mamé","Nathalie","Martin","Zoé","Seb","Papé","Jean","Agathe","Marion"]}`). Cette route permet de modifier la liste avant le tirage et la verrouille après.
-5. Publie `index.html`, `app.js`, `config.js`, `styles.css` et `santa.svg` sur un hébergeur statique (Netlify, Vercel, etc.). GitHub Pages seul ne fournit pas les fonctions backend.
+1. Crée un projet Supabase et exécute les migrations SQL dans l'ordre : `supabase/migrations/0001_secret_santa.sql`, puis `supabase/migrations/0002_atomic_setup.sql`.
+2. Déploie les fonctions :
+   ```sh
+   supabase functions deploy participants
+   supabase functions deploy reveal
+   supabase functions deploy setup
+   ```
+3. Configure les secrets des fonctions, si nécessaire :
+   ```sh
+   supabase secrets set SUPABASE_URL=https://<projet>.supabase.co SUPABASE_ANON_KEY=<clé-publique> SUPABASE_SERVICE_ROLE_KEY=<clé-service-role> ADMIN_TOKEN=<long-secret-aleatoire>
+   ```
+   Utilise un jeton administrateur long, aléatoire et gardé hors du dépôt. La `service_role` est encore plus sensible : ne la communique jamais aux participants.
+4. Renseigne `SUPABASE_URL` et `SUPABASE_ANON_KEY` dans `config.js`. La clé anon est publique ; ne mets jamais la clé service-role dans ce fichier.
+5. Ouvre le site, va dans « Gérer les participants », saisis le jeton administrateur et la liste (un prénom par ligne), puis enregistre. Tu peux aussi configurer la liste initiale par POST sur `/functions/v1/setup`, avec l'en-tête `x-admin-token` et le JSON `{"names":["Alice","Bob"]}`. Les noms doivent être uniques sans tenir compte de la casse.
+6. Héberge les fichiers statiques. GitHub Pages seul ne fournit pas le backend sécurisé ; il faut aussi le projet Supabase.
 
-Exécuter localement : `python3 -m http.server 8000`, puis ouvrir `http://localhost:8000` après configuration.
+En local : `python3 -m http.server 8000`, puis ouvre `http://localhost:8000` après configuration.
 
-## Tirage et confidentialité (limite assumée)
+## Confidentialité : limites à comprendre
 
-Le tirage est créé côté serveur au premier clic, dans une fonction PostgreSQL transactionnelle avec verrou consultatif. Il mélange les destinataires et rejette chaque permutation contenant une attribution à soi-même. Les contraintes d'unicité garantissent qu'aucun destinataire n'est attribué deux fois. Une fois créé, le tirage est conservé et la liste est verrouillée. La fonction de révélation renvoie uniquement le destinataire demandé ; la table des associations n'est pas lisible par la clé publique.
+Le navigateur ne reçoit jamais la table complète des associations. La fonction de tirage crée et persiste les résultats côté serveur, puis la fonction `reveal` retourne uniquement le destinataire associé à l'identifiant demandé. Les accès directs anon/authenticated aux associations sont révoqués par la migration.
 
-**Aucun lien privé ni contrôle d'identité n'est utilisé, conformément au choix demandé.** Les noms et identifiants des participants sont publics ; chacun peut cliquer sur n'importe quel bouton ou appeler la fonction de révélation avec l'identifiant d'un autre participant. Ainsi, les résultats ne sont pas confidentiels entre participants et le serveur ne peut pas garantir que chacun ne découvre que son propre résultat. Le backend évite de publier la liste complète des associations dans une seule réponse, mais ce n'est pas une barrière d'accès par personne.
+**Sans compte, code individuel ou lien privé, aucune identité n'est vérifiée.** Les identifiants des participants sont publics avec la liste ; toute personne capable d'appeler l'API peut demander le résultat de n'importe quel participant. Cette conception ne garantit donc pas que seul le destinataire légitime voit son résultat. Protéger réellement chaque résultat exige un secret/lien privé unique ou une authentification, contrairement à la demande de clic sans code.
 
-L'administratrice peut gérer les participants avant le tirage avec le jeton de configuration, mais ne dispose d'aucune vue des associations dans l'interface. Néanmoins, toute personne ayant le contrôle du projet Supabase, de ses secrets ou du serveur peut techniquement récupérer ou modifier les données. Ne pas prétendre à une confidentialité vis-à-vis de l'administratrice/hébergeur sans séparation de contrôle et de clés.
+L'interface n'offre pas à l'organisatrice une vue des associations, mais cela ne garantit pas qu'elle ne puisse pas les connaître. Une personne ayant les droits du projet Supabase (notamment accès SQL, propriétaire, ou clé service-role) peut lire la base et retrouver les associations. Pour réduire le risque, sépare la gestion technique du tirage et limite strictement les accès au tableau de bord ; il reste impossible de promettre une ignorance totale à une administratrice disposant des privilèges de base de données. Le jeton d'administration autorise la modification de la liste avant tirage, et toute personne qui le connaît peut s'en servir.
 
-## Tests manuels à vérifier après déploiement
+## Vérifications conseillées après déploiement
 
-- Accueil → liste ; les 10 participants et un bouton de révélation chacun s'affichent.
-- Cliquer les boutons teste les résultats ; aucun participant ne reçoit son propre nom et chaque destinataire est unique.
-- Recharger puis cliquer de nouveau conserve le résultat.
-- Modifier la liste via la route `setup` avant le premier clic ; toute modification après le tirage doit renvoyer HTTP 409.
-- La clé anon ne peut ni lire la table des associations, ni modifier la liste.
+- Accueil → liste et retour, sans rechargement ; vérifier le rendu sur mobile et ordinateur.
+- Révéler plusieurs participants : aucun ne reçoit son propre nom et aucun destinataire n'est attribué deux fois.
+- Recharger puis redemander un résultat : il doit être identique.
+- Enregistrer une liste avant le tirage ; après un premier résultat, les modifications doivent répondre HTTP 409.
+- Vérifier que les lectures anon de `assignments` échouent et que `participants` ne renvoie que les identifiants et prénoms.
+
+Le dépôt ne contient pas les secrets ni les identifiants d'un projet Supabase : l'application nécessite cette configuration pour être opérationnelle en production.
