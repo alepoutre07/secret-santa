@@ -25,22 +25,10 @@
         <img class="santa side-santa side-santa-left" src="./santa.svg" alt="" />
         <img class="santa side-santa side-santa-right" src="./santa.svg" alt="" />
         <div class="participants-content">
-          <h2 class="instructions">Appuie sur le bouton en face de ton prénom pour découvrir<br class="desktop-break" /> la personne à qui tu dois faire un cadeau</h2>
-          <p id="status" class="status" role="status" aria-live="polite"></p>
+          <h2 class="instructions">Choisis ton prénom pour découvrir la personne à qui tu dois faire un cadeau</h2>
+          <p class="trust-note">Par confiance, chacun ne consulte que son propre prénom.</p>
           <ul id="participant-list" class="participant-list" aria-label="Liste des participants"></ul>
           <button id="back-home" class="text-button" type="button">Retour</button>
-          <button id="manage-toggle" class="text-button manage-toggle" type="button" aria-expanded="false" aria-controls="manage-panel">Gérer les participants</button>
-          <section id="manage-panel" class="manage-panel" hidden aria-label="Gestion des participants">
-            <p class="manage-warning">Gestion réservée à l’organisatrice. La liste est modifiable avant le premier tirage seulement.</p>
-            <label class="admin-label" for="admin-token">Jeton administrateur</label>
-            <input id="admin-token" class="admin-input" type="password" autocomplete="off" />
-            <label class="admin-label" for="names-input">Prénoms (un par ligne)</label>
-            <textarea id="names-input" class="admin-input names-input" rows="8" maxlength="6200" spellcheck="false"></textarea>
-            <div class="manage-actions">
-              <button id="save-names" class="pill-button manage-save" type="button">Enregistrer la liste</button>
-              <button id="cancel-manage" class="text-button" type="button">Annuler</button>
-            </div>
-          </section>
         </div>
       </section>
 

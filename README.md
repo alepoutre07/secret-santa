@@ -1,48 +1,23 @@
 # Secret Santa familial
 
-Application web monopage en français, conçue autour des maquettes Figma fournies dans le dépôt. Elle conserve le fond bleu pastel, les tons brun/rouge/beige, le titre en arc, l'illustration du Père Noël et la liste à deux colonnes. Les écrans s'enchaînent sans rechargement.
+Application monopage statique conçue autour des maquettes Figma du dépôt : fond bleu pastel, tons brun/rouge/beige, titre en arc, Père Noël illustré et liste des participants en deux colonnes. Les écrans s'enchaînent sans rechargement.
 
-## Architecture
+## Version actuelle : page statique et confiance familiale
 
-- Interface statique (`index.html`, `styles.css`, `app.js`, `santa.svg`) hébergeable sur Netlify, Vercel ou un autre hébergeur statique.
-- Supabase fournit PostgreSQL et trois Edge Functions : `participants` (noms seulement), `reveal` (un destinataire par requête) et `setup` (gestion protégée des prénoms).
-- La clé publique anon est prévue pour le navigateur. La clé `service_role` et le jeton administrateur ne doivent jamais être ajoutés au dépôt ou au frontend.
-- Le tirage est produit côté serveur une seule fois au premier clic. Les associations restent dans une table protégée, et une contrainte garantit qu'aucun destinataire n'est attribué deux fois ni à soi-même.
+La page utilise une liste de dix participants et un tirage fixe dans `app.js`. Il n'y a aucun appel à Supabase, aucun compte, aucun code à saisir et aucun serveur nécessaire au fonctionnement du site. Chaque personne choisit son prénom dans la liste pour voir son destinataire, puis peut revenir à la liste.
 
-## Configuration et publication
+**Important : ce choix repose entièrement sur la confiance.** Comme le tirage est livré avec le code public du site, toute personne peut inspecter les fichiers JavaScript et consulter toutes les associations. Le bouton « Révéler » ne constitue pas un contrôle d'accès. Cette version ne peut donc pas assurer que chacun ne voie que son résultat, ni garantir que l'organisatrice ignore le tirage. Ne publiez pas cette version si cette limite ne convient pas à la famille.
 
-1. Crée un projet Supabase et exécute les migrations SQL dans l'ordre : `supabase/migrations/0001_secret_santa.sql`, puis `supabase/migrations/0002_atomic_setup.sql`.
-2. Déploie les fonctions :
-   ```sh
-   supabase functions deploy participants
-   supabase functions deploy reveal
-   supabase functions deploy setup
-   ```
-3. Configure les secrets des fonctions, si nécessaire :
-   ```sh
-   supabase secrets set SUPABASE_URL=https://<projet>.supabase.co SUPABASE_ANON_KEY=<clé-publique> SUPABASE_SERVICE_ROLE_KEY=<clé-service-role> ADMIN_TOKEN=<long-secret-aleatoire>
-   ```
-   Utilise un jeton administrateur long, aléatoire et gardé hors du dépôt. La `service_role` est encore plus sensible : ne la communique jamais aux participants.
-4. Renseigne `SUPABASE_URL` et `SUPABASE_ANON_KEY` dans `config.js`. La clé anon est publique ; ne mets jamais la clé service-role dans ce fichier.
-5. Ouvre le site, va dans « Gérer les participants », saisis le jeton administrateur et la liste (un prénom par ligne), puis enregistre. Tu peux aussi configurer la liste initiale par POST sur `/functions/v1/setup`, avec l'en-tête `x-admin-token` et le JSON `{"names":["Alice","Bob"]}`. Les noms doivent être uniques sans tenir compte de la casse.
-6. Héberge les fichiers statiques. GitHub Pages seul ne fournit pas le backend sécurisé ; il faut aussi le projet Supabase.
+Le tirage intégré attribue une personne à chacun, sans auto-attribution et sans destinataire en double. Il reste identique après actualisation. Pour changer la liste ou le tirage, modifiez les associations dans `app.js` avant de partager le site et vérifiez les contraintes ci-dessus.
 
-En local : `python3 -m http.server 8000`, puis ouvre `http://localhost:8000` après configuration.
+## Publication sur GitHub Pages
 
-## Confidentialité : limites à comprendre
+Les fichiers du site sont statiques et peuvent être publiés via GitHub Pages : dans les paramètres du dépôt, ouvrez **Pages**, sélectionnez **Deploy from a branch**, choisissez `main` et `/ (root)`, puis enregistrez. Une fois la publication terminée, partagez l'URL Pages avec la famille. Il n'y a pas de backend à configurer.
 
-Le navigateur ne reçoit jamais la table complète des associations. La fonction de tirage crée et persiste les résultats côté serveur, puis la fonction `reveal` retourne uniquement le destinataire associé à l'identifiant demandé. Les accès directs anon/authenticated aux associations sont révoqués par la migration.
+Pour tester en local, lancez `python3 -m http.server 8000` à la racine du dépôt, puis ouvrez `http://localhost:8000`.
 
-**Sans compte, code individuel ou lien privé, aucune identité n'est vérifiée.** Les identifiants des participants sont publics avec la liste ; toute personne capable d'appeler l'API peut demander le résultat de n'importe quel participant. Cette conception ne garantit donc pas que seul le destinataire légitime voit son résultat. Protéger réellement chaque résultat exige un secret/lien privé unique ou une authentification, contrairement à la demande de clic sans code.
+## Participants
 
-L'interface n'offre pas à l'organisatrice une vue des associations, mais cela ne garantit pas qu'elle ne puisse pas les connaître. Une personne ayant les droits du projet Supabase (notamment accès SQL, propriétaire, ou clé service-role) peut lire la base et retrouver les associations. Pour réduire le risque, sépare la gestion technique du tirage et limite strictement les accès au tableau de bord ; il reste impossible de promettre une ignorance totale à une administratrice disposant des privilèges de base de données. Le jeton d'administration autorise la modification de la liste avant tirage, et toute personne qui le connaît peut s'en servir.
+Thomas, Mamé, Nathalie, Martin, Zoé, Seb, Papé, Jean, Agathe et Marion.
 
-## Vérifications conseillées après déploiement
-
-- Accueil → liste et retour, sans rechargement ; vérifier le rendu sur mobile et ordinateur.
-- Révéler plusieurs participants : aucun ne reçoit son propre nom et aucun destinataire n'est attribué deux fois.
-- Recharger puis redemander un résultat : il doit être identique.
-- Enregistrer une liste avant le tirage ; après un premier résultat, les modifications doivent répondre HTTP 409.
-- Vérifier que les lectures anon de `assignments` échouent et que `participants` ne renvoie que les identifiants et prénoms.
-
-Le dépôt ne contient pas les secrets ni les identifiants d'un projet Supabase : l'application nécessite cette configuration pour être opérationnelle en production.
+Les anciens fichiers Supabase présents dans `supabase/` ne sont plus utilisés par l'interface statique. Ne les déployez pas pour cette version.

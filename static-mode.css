@@ -1,0 +1,6 @@
+/* Reuses the existing mockup styles; this small note preserves the intended simple layout. */
+.trust-note { margin: -30px auto 28px; text-align: center; font-size: 1rem; font-weight: 700; }
+.recipient-name-enter { animation: reveal-name .65s ease both; }
+@media (max-width: 760px) {
+  .trust-note { margin: -18px auto 22px; font-size: .92rem; }
+}
